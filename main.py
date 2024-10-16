@@ -22,7 +22,7 @@ board.append(['',tag[0],'USB 혜화역 4시쯤','빨간 SANDISK','010-1234-1234'
 board.append(['5678',tag[0],'정문 근처에서 키링을 잃어버렸어요 사례 있음','키링키링','N/A','만원']) #테스트문구2
 board.append(['1234',tag[1],'비싸보이는 안경을 주웠어요','블루라이트인듯','010-1234-1234',place[0]]) #테스트문구3
 
-announcement = "로그인 시에는 이름을 기재하지 않으셔도 됩니다." #실행 시 안내문구
+announcement = "모든 분실물이 모이는 곳, 이차원 보관소입니다." #실행 시 안내문구
 
 def register(): #회원가입 함수.
     global userlist #함수 밖까지 회원목록 유지
@@ -38,7 +38,7 @@ def register(): #회원가입 함수.
             break #없으면 0 유지
     if(is_id): #1, True: 있으면
         # messagebox.showwarning("분실물 찾기 프로그램","이미 존재하는 ID입니다.")
-        announcement = "이미 존재하는 ID입니다." #안내문구에 저장
+        announcement = "이미 존재하는 학번입니다." #안내문구에 저장
     elif("" in (id,pw,name)): # 하나라도 값을 안채워놓으면
         announcement = "빈 칸을 모두 채워주세요." #안내문구에 저장
     else: #0, False: 없으면
@@ -76,11 +76,11 @@ def userlogin():
             break #더 돌 필요 없으므로 break
 
     if(is_id==0): #0, False: id가 일치하지 않으면 혹은 id,pw 둘다 틀리면(초기값 0에서 변화가 없으면)
-        announcement = "아이디를 확인해 주십시오."
+        announcement = "학번을 확인해 주십시오."
     elif(is_pw==0): #0, False: 비밀번호가 다르면
         announcement = "비밀번호가 다릅니다."
     else: #둘다 0이 아닌 경우 로그인 성공, 메인 돌입
-        announcement = "로그인 시에는 이름을 기재하지 않으셔도 됩니다."
+        announcement = "모든 분실물이 모이는 곳, 이차원 보관소입니다."
         logout_flag = False #로그아웃용 깃발 False(새로 로그인할 때 대비 초기화)
         mainscreen(id,name) #메인화면 실행 - 유저 id, 이름 연계
 
@@ -138,6 +138,16 @@ def mainscreen(id,name):
     welcome = Label(main,text=name+'님 환영합니다.',font=('나눔고딕', 20),fg='white',background='#0B0911')
     welcome.place(x=570,y=20)
 
+    menu_1 = Label(main,text="글번호",font=('나눔고딕', 14),fg='white',background='#0B0911')
+    menu_1.place(x=230,y=100)
+    menu_2 = Label(main,text="이름",font=('나눔고딕', 14),fg='white',background='#0B0911')
+    menu_2.place(x=328,y=100)
+    menu_3 = Label(main,text="게시판",font=('나눔고딕', 14),fg='white',background='#0B0911')
+    menu_3.place(x=424,y=100)
+    menu_4 = Label(main,text="제목",font=('나눔고딕', 14),fg='white',background='#0B0911')
+    menu_4.place(x=544,y=100)
+
+
     initial(main,id,init)
         
     write_btn = Button(main,text="글쓰기",command = lambda: write(main,id),font=("나눔고딕", 12))
@@ -154,7 +164,7 @@ def mainscreen(id,name):
 
 def initial(main,id,init):
     global userlist, boardnum, mainboard, info_btn, comp_btn, mail_btn
-    pos_y = 130
+    pos_y = 150
 
     if init != True: #첫 실행이 아니면: 기존에 있던거 초기화
         for i in range(len(boardnum)):
@@ -172,13 +182,19 @@ def initial(main,id,init):
         is_user = 0
         if i[0] == id:
             is_user = 1
-        pos_x = 330
+        pos_x = 230 #330
         if i[1] == '[찾습니다]' and i[-1] != 'N/A': #찾습니다 태그에, 사례가 N/A가 아닌 경우 (사례가 있는 경우)
-            mainboard[index] = Label(main,text=i[1]+"\t     "+i[2].replace("{","").replace("}",""),fg='tomato',background='#0B0911',font=("나눔고딕", 14))
+            buffer = list(namechkr(i[0]))
+            buffer[1] = '*'
+            name = "".join(buffer)
+            mainboard[index] = Label(main,text=str(index+1)+"\t"+name+"\t"+i[1]+"\t     "+i[2].replace("{","").replace("}",""),fg='tomato',background='#0B0911',font=("나눔고딕", 14))
         else:
-            mainboard[index] = Label(main,text=i[1]+"\t     "+i[2].replace("{","").replace("}",""),fg='white',background='#0B0911',font=("나눔고딕", 14))
+            buffer = list(namechkr(i[0]))
+            buffer[1] = '*'
+            name = "".join(buffer)
+            mainboard[index] = Label(main,text=str(index+1)+"\t"+name+"\t"+i[1]+"\t     "+i[2].replace("{","").replace("}",""),fg='white',background='#0B0911',font=("나눔고딕", 14))
         mainboard[index].place(x=pos_x,y=pos_y)
-        pos_x += 580
+        pos_x += 780 #580
         info_btn[index] = Button(main,text="내용",command= lambda x= index:inform(x,id),font=("나눔고딕", 12))
         info_btn[index].place(x=pos_x,y=pos_y)
         pos_x += 80
@@ -429,7 +445,7 @@ def namechkr(id):
 
 login = Tk()
 login.title("이차원 보관소")
-login.geometry('500x400')
+login.geometry('480x400')
 
 name_lab = Label(login, text='이름',font=('나눔고딕', 12))
 name_lab.place(x=100,y=48)
@@ -447,7 +463,12 @@ pw_ent = Entry(login,font=('나눔고딕', 12),show="*")
 pw_ent.place(x=180,y=150)
 
 announce = Label(login, text=announcement,font=('나눔고딕', 12))
-announce.place(x=90, y=220)
+announce.place(x=90, y=200)
+join = Label(login, text="회원가입 시 이름, 학번, 비밀번호를 기재하셔야 합니다.",font=('나눔고딕', 10))
+join.place(x=90, y=240)
+loginannounce = Label(login,text="로그인 시에는 이름을 기재하지 않으셔도 됩니다.",font=('나눔고딕', 10))
+loginannounce.place(x=90, y=260)
+
 
 notice()
 
