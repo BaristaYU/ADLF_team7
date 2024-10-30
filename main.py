@@ -24,7 +24,8 @@ userlist.append(['','','관리자',mailbox[4]]) #테스트용3
 board.append(['0000',tag[0],'USB 혜화역 4시쯤','빨간 SANDISK','010-1234-1234','N/A']) #테스트문구1
 board.append(['5678',tag[0],'정문 근처에서 키링을 잃어버렸어요 사례 있음','키링키링','N/A','만원']) #테스트문구2
 board.append(['9999',tag[1],'비싸보이는 안경을 주웠어요','블루라이트인듯','010-1234-1234',place[0]]) #테스트문구3
-board.append(['1234',tag[1],'아파트 아파트 아파트 아파트 아파트 아파트. Uh, uh huh uh huh','아파트아파트아파트아파트아파트아파트아파트아파트아파트아파트','010-1234-1234',place[2]]) #테스트문구4
+board.append(['1234',tag[1],'아파트 아파트 아파트 아파트 아파트 아파트. Uh, uh huh uh huh','아파트아파트아파트아파트아파트아파트아파트아파트아파트아파트','010-1234-1234',place[1]]) #테스트문구4
+board.append(['',tag[1],'관리자입니다.','관리자','0000',place[2]]) #테스트문구4
 
 announcement = "모든 분실물이 모이는 곳, 이차원 보관소입니다." #실행 시 안내문구
 
@@ -122,7 +123,7 @@ def close(): #프로그램 종료함수. 모든 창은 Login을 부모로 하는
     write_close_btn.place(x=150,y=60) 
 
 def mainscreen(id,name):
-    global userlist
+    global userlist, all_rad
     init = True
     bg = 'space_shade.png'
     main = Toplevel(login)
@@ -130,26 +131,110 @@ def mainscreen(id,name):
     main.geometry('1366x768')
     img = PhotoImage(file=bg)
 
-
     def mainupdate():
         main.after(200,mainupdate)
         if logout_flag == True:
             main.destroy()
     
+    def selector(postvar,id):
+        global boardnum
+        my_board = list()
+        lt_board = list()
+        fd_board = list()
+
+        pos_y = 170
+
+        for i in range(len(boardnum)):
+            if mainboard[i] != 'N/A':
+                mainboard[i].place_forget()
+            if info_btn[i] != 'N/A':
+                info_btn[i].place_forget()
+            if comp_btn[i] != 'N/A':
+                comp_btn[i].place_forget()
+            if mail_btn[i] != 'N/A':
+                mail_btn[i].place_forget()
+
+        if postvar == 0:
+            initial(main,id,False)
+
+        if postvar == 1:
+            pos_x = 130
+
+            for lt in boardnum:
+                if lt[-1] == '[찾습니다]' and lt != 'N/A':
+                    lt_board.append(lt)
+            for lt2 in lt_board:
+                pos_x = 130
+                lt2[1].place(x=pos_x,y=pos_y) #제목
+                pos_x += 930 #780
+                lt2[2].place(x=pos_x,y=pos_y) #내용
+                pos_x += 80
+                if lt2[3] != 'N/A': #완료버튼 n/a 아니면
+                    lt2[3].place(x=pos_x,y=pos_y) #완료
+                else: #아니면 쪽지
+                    lt2[4].place(x=pos_x,y=pos_y)
+                pos_y += 50 #개행
+
+        if postvar == 2:
+            pos_x = 130
+
+            for fd in boardnum:
+                if fd[-1] == '[주웠어요]' and fd != 'N/A':
+                    fd_board.append(fd)
+            for fd2 in fd_board:
+                pos_x = 130
+                fd2[1].place(x=pos_x,y=pos_y) #제목
+                pos_x += 930 #780
+                fd2[2].place(x=pos_x,y=pos_y) #내용
+                pos_x += 80
+                if fd2[3] != 'N/A': #완료버튼 n/a 아니면
+                    fd2[3].place(x=pos_x,y=pos_y) #완료
+                else: #아니면 쪽지
+                    fd2[4].place(x=pos_x,y=pos_y)
+                pos_y += 50 #개행
+
+        if postvar == 3:
+            pos_x = 130
+
+            for my in boardnum:
+                if my[0] == id and my != 'N/A':
+                    my_board.append(my)
+            for my2 in my_board:
+                pos_x = 130
+                my2[1].place(x=pos_x,y=pos_y) #제목
+                pos_x += 930 #780
+                my2[2].place(x=pos_x,y=pos_y) #내용
+                pos_x += 80
+                if my2[3] != 'N/A': #완료버튼 n/a 아니면
+                    my2[3].place(x=pos_x,y=pos_y) #완료
+                else: #아니면 쪽지
+                    my2[4].place(x=pos_x,y=pos_y)
+                pos_y += 50 #개행
+
     bg_img = Label(main,image=img)
     bg_img.pack()
 
     welcome = Label(main,text=name+'님 환영합니다.',font=('나눔고딕', 20),fg='white',background='#0B0911')
     welcome.place(x=570,y=20)
 
+    postvar = IntVar()
+    all_rad = Radiobutton(main,text='전체 글',value=0,variable=postvar,command=lambda:selector(postvar.get(),id),font=('나눔고딕', 12),fg='white',background='#0B0911',selectcolor='#0B0911',activebackground='#0B0911',activeforeground='white')
+    all_rad.place(x=130,y=80) 
+    find_rad = Radiobutton(main,text='[찾습니다]',value=1,variable=postvar,command=lambda:selector(postvar.get(),id),font=('나눔고딕', 12),fg='white',background='#0B0911',selectcolor='#0B0911',activebackground='#0B0911',activeforeground='white')
+    find_rad.place(x=270,y=80)
+    find_rad = Radiobutton(main,text='[주웠어요]',value=2,variable=postvar,command=lambda:selector(postvar.get(),id),font=('나눔고딕', 12),fg='white',background='#0B0911',selectcolor='#0B0911',activebackground='#0B0911',activeforeground='white')
+    find_rad.place(x=420,y=80)  
+    find_rad = Radiobutton(main,text='내가 쓴 글',value=3,variable=postvar,command=lambda:selector(postvar.get(),id),font=('나눔고딕', 12),fg='white',background='#0B0911',selectcolor='#0B0911',activebackground='#0B0911',activeforeground='white')
+    find_rad.place(x=580,y=80)  
+
     menu_1 = Label(main,text="글번호",font=('나눔고딕', 14),fg='white',background='#0B0911')
-    menu_1.place(x=130,y=100) #230
+    menu_1.place(x=130,y=120) #230
     menu_2 = Label(main,text="이름",font=('나눔고딕', 14),fg='white',background='#0B0911')
-    menu_2.place(x=228,y=100) #328
+    menu_2.place(x=228,y=120) #328
     menu_3 = Label(main,text="게시판",font=('나눔고딕', 14),fg='white',background='#0B0911')
-    menu_3.place(x=324,y=100) #424
+    menu_3.place(x=324,y=120) #424
     menu_4 = Label(main,text="제목",font=('나눔고딕', 14),fg='white',background='#0B0911')
-    menu_4.place(x=444,y=100) #544
+    menu_4.place(x=444,y=120) #544
 
     initial(main,id,init)
         
@@ -166,8 +251,8 @@ def mainscreen(id,name):
     main.mainloop()
 
 def initial(main,id,init):
-    global boardnum, mainboard, info_btn, comp_btn, mail_btn
-    pos_y = 150
+    global boardnum, mainboard, info_btn, comp_btn, mail_btn, all_rad
+    pos_y = 170
 
     if init != True: #첫 실행이 아니면: 기존에 있던거 초기화
         for i in range(len(boardnum)):
@@ -215,10 +300,12 @@ def initial(main,id,init):
                                     #2번째 버튼에 저장된 toplevel.!button4에 config명령을 줘버려서 에러터짐
         pos_y += 50 #개행
 
-        boardnum[index] = [i[0], mainboard[index], info_btn[index], comp_btn[index], mail_btn[index]]
+        boardnum[index] = [i[0], mainboard[index], info_btn[index], comp_btn[index], mail_btn[index], i[1]]
         
         if comp_chkr[index] != "N/A":
-            comp(index)
+            complete(index)
+
+        all_rad.select()
 
 def inform(x,id):
     #게시물 형식: id, 태그(0:찾 / 1:주), 제목, 세부사항, 전화번호(n/a), 사례(n/a) or 장소
@@ -264,16 +351,34 @@ def inform(x,id):
     info_close_btn.place(x=185,y=230)
 
 def comp(x):
+    check = Toplevel(login)
+    check.title(namechkr(board[x][0])+"님의 이차원 보관소") 
+    check.geometry('250x100') #해상도
+
+    check_ask = Label(check,text='완료 하시겠습니까?',font=('나눔고딕', 12))
+    check_ask.pack(pady=20) #라벨 배치
+
+    yes_btn = Button(check,text="확인",command=lambda:[complete(x),check.destroy()],font=('나눔고딕', 10))
+    yes_btn.place(x=60,y=60)  #버튼 배치
+
+    no_btn = Button(check,text="취소",command=lambda: check.destroy(),font=('나눔고딕', 10)) #취소버튼 누를 시 warn 창 종료
+    no_btn.place(x=150,y=60)  #버튼 배치
+
+def complete(x):
     global boardnum,comp_chkr
 
-    boardnum[x][1].config(fg='gray65')
+    buffer = list(namechkr(board[x][0]))
+    buffer[1] = '*'
+    name = "".join(buffer)
+
+    boardnum[x][1].config(text=str(x+1)+"\t"+name+"\t"+board[x][1]+"\t     "+"[완료된 글입니다.]",fg='gray65')
     boardnum[x][2].config(state=DISABLED)
     if boardnum[x][3] != "N/A":
         boardnum[x][3].config(state=DISABLED)
     if boardnum[x][4] != "N/A": 
         boardnum[x][4].config(state=DISABLED)
     
-    comp_chkr[x] = True
+    comp_chkr[x] = True   
     
 def sendmail(x,my_id):
     global userlist
