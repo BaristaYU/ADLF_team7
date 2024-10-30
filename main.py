@@ -17,10 +17,14 @@ comp_chkr = list("N/A" for i in range(10)) #완료여부 리스트(열) (여유�
 
 userlist.append(['1234','1234','유용균',mailbox[0]]) #테스트용1
 userlist.append(['5678','5678','김세상',mailbox[1]]) #테스트용2
-userlist.append(['','','관리자',mailbox[2]]) #테스트용3
-board.append(['',tag[0],'USB 혜화역 4시쯤','빨간 SANDISK','010-1234-1234','N/A']) #테스트문구1
+userlist.append(['0000','0000','양초롱',mailbox[2]]) #테스트용4
+userlist.append(['9999','9999','정예솔',mailbox[3]]) #테스트용5
+userlist.append(['','','관리자',mailbox[4]]) #테스트용3
+
+board.append(['0000',tag[0],'USB 혜화역 4시쯤','빨간 SANDISK','010-1234-1234','N/A']) #테스트문구1
 board.append(['5678',tag[0],'정문 근처에서 키링을 잃어버렸어요 사례 있음','키링키링','N/A','만원']) #테스트문구2
-board.append(['1234',tag[1],'비싸보이는 안경을 주웠어요','블루라이트인듯','010-1234-1234',place[0]]) #테스트문구3
+board.append(['9999',tag[1],'비싸보이는 안경을 주웠어요','블루라이트인듯','010-1234-1234',place[0]]) #테스트문구3
+board.append(['1234',tag[1],'아파트 아파트 아파트 아파트 아파트 아파트. Uh, uh huh uh huh','아파트아파트아파트아파트아파트아파트아파트아파트아파트아파트','010-1234-1234',place[2]]) #테스트문구4
 
 announcement = "모든 분실물이 모이는 곳, 이차원 보관소입니다." #실행 시 안내문구
 
@@ -42,7 +46,7 @@ def register(): #회원가입 함수.
     elif("" in (id,pw,name)): # 하나라도 값을 안채워놓으면
         announcement = "빈 칸을 모두 채워주세요." #안내문구에 저장
     else: #0, False: 없으면
-        userlist.append([id,pw,name,mailbox[len(userlist)]]) #유저DB에 정보 저장
+        userlist.append([id,pw,name,mailbox[len(userlist)-1]]) #유저DB에 정보 저장
         # messagebox.showwarning("분실물 찾기 프로그램","회원가입 성공")
         announcement = "회원가입 성공" #안내문구에 저장
         name_ent.delete(0,'end')
@@ -139,14 +143,13 @@ def mainscreen(id,name):
     welcome.place(x=570,y=20)
 
     menu_1 = Label(main,text="글번호",font=('나눔고딕', 14),fg='white',background='#0B0911')
-    menu_1.place(x=230,y=100)
+    menu_1.place(x=130,y=100) #230
     menu_2 = Label(main,text="이름",font=('나눔고딕', 14),fg='white',background='#0B0911')
-    menu_2.place(x=328,y=100)
+    menu_2.place(x=228,y=100) #328
     menu_3 = Label(main,text="게시판",font=('나눔고딕', 14),fg='white',background='#0B0911')
-    menu_3.place(x=424,y=100)
+    menu_3.place(x=324,y=100) #424
     menu_4 = Label(main,text="제목",font=('나눔고딕', 14),fg='white',background='#0B0911')
-    menu_4.place(x=544,y=100)
-
+    menu_4.place(x=444,y=100) #544
 
     initial(main,id,init)
         
@@ -163,7 +166,7 @@ def mainscreen(id,name):
     main.mainloop()
 
 def initial(main,id,init):
-    global userlist, boardnum, mainboard, info_btn, comp_btn, mail_btn
+    global boardnum, mainboard, info_btn, comp_btn, mail_btn
     pos_y = 150
 
     if init != True: #첫 실행이 아니면: 기존에 있던거 초기화
@@ -182,19 +185,19 @@ def initial(main,id,init):
         is_user = 0
         if i[0] == id:
             is_user = 1
-        pos_x = 230 #330
+        pos_x = 130 #230
         if i[1] == '[찾습니다]' and i[-1] != 'N/A': #찾습니다 태그에, 사례가 N/A가 아닌 경우 (사례가 있는 경우)
             buffer = list(namechkr(i[0]))
             buffer[1] = '*'
             name = "".join(buffer)
-            mainboard[index] = Label(main,text=str(index+1)+"\t"+name+"\t"+i[1]+"\t     "+i[2].replace("{","").replace("}",""),fg='tomato',background='#0B0911',font=("나눔고딕", 14))
+            mainboard[index] = Label(main,text=str(index+1)+"\t"+name+"\t"+i[1]+"\t     "+i[2],fg='tomato',background='#0B0911',font=("나눔고딕", 14))
         else:
             buffer = list(namechkr(i[0]))
             buffer[1] = '*'
             name = "".join(buffer)
-            mainboard[index] = Label(main,text=str(index+1)+"\t"+name+"\t"+i[1]+"\t     "+i[2].replace("{","").replace("}",""),fg='white',background='#0B0911',font=("나눔고딕", 14))
+            mainboard[index] = Label(main,text=str(index+1)+"\t"+name+"\t"+i[1]+"\t     "+i[2],fg='white',background='#0B0911',font=("나눔고딕", 14))
         mainboard[index].place(x=pos_x,y=pos_y)
-        pos_x += 780 #580
+        pos_x += 930 #780
         info_btn[index] = Button(main,text="내용",command= lambda x= index:inform(x,id),font=("나눔고딕", 12))
         info_btn[index].place(x=pos_x,y=pos_y)
         pos_x += 80
@@ -208,7 +211,8 @@ def initial(main,id,init):
         else:
             mail_btn[index] = Button(main,text="쪽지",command=lambda x=index: sendmail(x,id),font=("나눔고딕", 12))
             mail_btn[index].place(x=pos_x,y=pos_y)
-            comp_btn[index] = "N/A"
+            comp_btn[index] = "N/A" #재접속시 toplevel.!button4는 destroy되는데,
+                                    #2번째 버튼에 저장된 toplevel.!button4에 config명령을 줘버려서 에러터짐
         pos_y += 50 #개행
 
         boardnum[index] = [i[0], mainboard[index], info_btn[index], comp_btn[index], mail_btn[index]]
@@ -222,32 +226,42 @@ def inform(x,id):
     name = namechkr(id)
     info = Toplevel(login)
     info.title(name+"님의 이차원 보관소")
-    info.geometry('450x350')
+    info.geometry('400x300')
     
     information = board[x][3:]
     information.insert(0,board[x][1])
 
-    details = Label(info,text="세부사항: "+"\t"+information[1],font=('나눔고딕',12))
-    details.place(x=130,y=50)
+    details = Label(info,text="세부사항: ",font=('나눔고딕',12))
+    details.place(x=50,y=50)
 
-    contact = Label(info, text="전화번호: "+"\t"+information[2],font=('나눔고딕',12))
-    
+    details_txt = Text(info, width=20, height=3, font=("나눔고딕", 12))
+    details_txt.insert(END, information[1])
+    details_txt.place(x=133,y=52)
+    details_txt.config(state=DISABLED,bd=1,bg='SystemButtonFace')
+
+    contact = Label(info, text="연락처:",font=('나눔고딕',12))
+    contact_txt = Text(info, width=20, height=1, font=("나눔고딕", 12))
+    contact_txt.insert(END, information[2])
+    contact_txt.config(state=DISABLED,bd=0,bg='SystemButtonFace')
+
+    contact.place(x=50,y=130)
+    contact_txt.place(x=133,y=132)
+
     if information[2] == 'N/A':
-        contact.config(text="전화번호:",state=DISABLED)
-    
-    contact.place(x=130,y=100)
+        contact.config(text="연락처:",state=DISABLED)
+        contact_txt.place_forget()
 
     if information[0] == '[찾습니다]':
         reward = Label(info, text="사례: "+"\t"+information[3],font=('나눔고딕',12))
         if information[3] == 'N/A':
             reward.config(text="사례:",state=DISABLED)
-        reward.place(x=130,y=150)
+        reward.place(x=50,y=175)
     else:
         reward = Label(info, text="장소: "+"\t"+information[3],font=('나눔고딕',12))
-        reward.place(x=130,y=150)
+        reward.place(x=50,y=175)
     
-    info_close_btn = Button(info,text="닫기",command=lambda: info.destroy(),font=('나눔고딕',10))
-    info_close_btn.place(x=205,y=300)
+    info_close_btn = Button(info,text="닫기",command=lambda: info.destroy(),font=('나눔고딕',12))
+    info_close_btn.place(x=185,y=230)
 
 def comp(x):
     global boardnum,comp_chkr
@@ -309,8 +323,6 @@ def mailscreen(id):
     scrollbar.pack(side="right", fill="y")
 
     def mailupdate():
-        global userlist
-
         mails = list() #쪽지함 불러오기
         pos = textbox.yview() #스크롤바 위치 저장
         textbox.delete('1.0',END) #쪽지함 초기화(후에 재생성)
@@ -342,55 +354,66 @@ def write(main,id):
     name = namechkr(id)
     post = Toplevel(login)
     post.title(name+"님의 이차원 보관소")
-    post.geometry('500x400')
+    post.geometry('780x450') #500 - 800
 
     def lost():
         place1_btn.place_forget()
         place2_btn.place_forget()
         place3_btn.place_forget()
         weetak_lab.place_forget()
-        void_lab.place_forget()
 
-        reward_lab.place(x=80,y=237)
-        reward_ent.place(x=200,y=240,width=220)
+        reward_place_lab.config(text='사례')
+        optional_2.place(x=147, y=237)
+        reward_ent.place(x=210,y=240,width=240)
         saryeh_lab.place(x=80,y=270)
         
     def find():
-        reward_lab.place_forget()
         reward_ent.place_forget()
+        optional_2.place_forget()
         saryeh_lab.place_forget()
-        void_lab.place_forget()
 
-        place1_btn.place(x=130,y=237)
-        place2_btn.place(x=230,y=237)
-        place3_btn.place(x=320,y=237)
+        reward_place_lab.config(text='장소')
+        place1_btn.place(x=150,y=235) #237
+        place2_btn.place(x=250,y=235)
+        place3_btn.place(x=340,y=235)
         weetak_lab.place(x=80,y=270)
         place1_btn.select()
 
     tagvar = IntVar()
     lost_btn = Radiobutton(post,text='찾습니다',value=0,variable=tagvar,command=lost,font=('나눔고딕', 12))
-    lost_btn.place(x=150,y=30)
+    lost_btn.place(x=520,y=190) #150,30
     find_btn = Radiobutton(post,text='주웠어요',value=1,variable=tagvar,command=find,font=('나눔고딕', 12))
-    find_btn.place(x=250,y=30)
+    find_btn.place(x=520,y=240)  #250,30
 
     lost_btn.select()
 
-    title_lab = Label(post, text='제목 (필수)',font=('나눔고딕', 12))
+    title_lab = Label(post, text='제목',font=('나눔고딕', 12))
     title_lab.place(x=80,y=87)
+    mandatory_1 = Label(post, text='(필수)',font=('나눔고딕', 12), fg='red')
+    mandatory_1.place(x=147, y=87)
+
     title_ent = Entry(post,font=('나눔고딕', 12))
-    title_ent.place(x=200,y=90,width=220)
+    title_ent.place(x=210,y=90,width=480) #220
 
-    info_lab = Label(post, text='세부사항 (필수)',font=('나눔고딕', 12))
+    info_lab = Label(post, text='세부사항',font=('나눔고딕', 12))
     info_lab.place(x=80,y=137)
+    mandatory_2 = Label(post, text='(필수)',font=('나눔고딕', 12), fg='red')
+    mandatory_2.place(x=147, y=137)
+
     info_ent = Entry(post,font=('나눔고딕', 12))
-    info_ent.place(x=200,y=140,width=220)
+    info_ent.place(x=210,y=140,width=480)
 
-    tel_lab = Label(post, text='연락처 (선택)',font=('나눔고딕', 12))
+    tel_lab = Label(post, text='연락처',font=('나눔고딕', 12))
     tel_lab.place(x=80,y=187)
-    tel_ent = Entry(post,font=('나눔고딕', 12))
-    tel_ent.place(x=200,y=190,width=220)
+    optional_1 = Label(post, text='(선택)',font=('나눔고딕', 12))
+    optional_1.place(x=147, y=187)
 
-    reward_lab = Label(post, text='사례 (선택)',font=('나눔고딕', 12))
+    tel_ent = Entry(post,font=('나눔고딕', 12))
+    tel_ent.place(x=210,y=190,width=240)
+
+    reward_place_lab = Label(post, text='사례',font=('나눔고딕', 12))
+    optional_2 = Label(post, text='(선택)',font=('나눔고딕', 12))
+
     reward_ent = Entry(post,font=('나눔고딕', 12))
     saryeh_lab = Label(post,text="* 사례가 있을 시 글 제목이 강조됩니다.",font=('나눔고딕', 10))
 
@@ -400,8 +423,9 @@ def write(main,id):
     place3_btn = Radiobutton(post,text='취득',value=2,variable=placevar,font=('나눔고딕', 12))
     weetak_lab = Label(post,text="* 위탁 시 위탁장소를 세부사항에 적어주세요.",font=('나눔고딕', 10))
 
-    reward_lab.place(x=80,y=237)
-    reward_ent.place(x=200,y=240,width=220)
+    reward_place_lab.place(x=80,y=237)
+    optional_2.place(x=147, y=237)
+    reward_ent.place(x=210,y=240,width=240)
     saryeh_lab.place(x=80,y=270)
 
     def getdata(id,tagvar,placevar):
@@ -420,21 +444,51 @@ def write(main,id):
         else:
             last = place[placevar]
 
-        if title_ent.get() != '' and info_ent.get() != '':
+        title_len = len(title_ent.get())
+        info_len = len(info_ent.get())
+
+        title_max30.config(text='글자수 제한을 벗어났습니다. 현재 글자수: '+str(title_len)+'/30')
+        info_max30.config(text='글자수 제한을 벗어났습니다. 현재 글자수: '+str(info_len)+'/30')
+
+        if 0 < title_len <= 30 and 0 < info_len <= 30:
             board.insert(0,[id,tag[tagvar],title_ent.get(),info_ent.get(),tel,last])
             comp_chkr.insert(0,'N/A')
             initial(main,id,False)
             post.destroy()
+
+        elif title_len > 30: #제목 글자수 초과 시
+            title_max30.place(x=210,y=112)
+            void_lab.place(x=300,y=340)
+            info_max30.place_forget()
+            if info_len > 30:
+                info_max30.place(x=210,y=162)
+                void_lab.place_forget()
+            if 0 < info_len <= 30:
+                void_lab.place_forget()
+
+        elif info_len > 30: #내용 글자수 초과 시
+            info_max30.place(x=210,y=162)
+            void_lab.place(x=300,y=340)
+            title_max30.place_forget()
+            if 0 < title_len <= 30:
+                void_lab.place_forget()
+
         else:
-            void_lab.place(x=80,y=300)
+            void_lab.place(x=300,y=340)
+            if title_len <= 30:
+                title_max30.place_forget()
+            if info_len <= 30:
+                info_max30.place_forget()
 
-    write_btn = Button(post, text="작성", command=lambda: getdata(id,tagvar.get(), placevar.get()),font=('나눔고딕', 10))
-    write_btn.place(x=150,y=350) 
+    write_btn = Button(post, text="작성", command=lambda: getdata(id,tagvar.get(), placevar.get()),font=('나눔고딕', 12))
+    write_btn.place(x=280,y=380) 
 
-    write_close_btn = Button(post,text="닫기",command=lambda: post.destroy(),font=('나눔고딕', 10))
-    write_close_btn.place(x=300,y=350) 
+    write_close_btn = Button(post,text="닫기",command=lambda: post.destroy(),font=('나눔고딕', 12))
+    write_close_btn.place(x=480,y=380) 
 
-    void_lab = Label(post,text='필수사항을 전부 입력해주세요.',font=('나눔고딕', 10))
+    void_lab = Label(post,text='필수사항을 전부 입력해주세요.',font=('나눔고딕', 12))
+    title_max30 = Label(post,font=('나눔고딕', 8))
+    info_max30 = Label(post,font=('나눔고딕', 8))
 
     post.mainloop()
 
